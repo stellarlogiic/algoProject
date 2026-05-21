@@ -498,4 +498,55 @@ void prosesTransaksi() {
     pressEnter();
 }
 
+// main program
+int main() {
+    initMenuData();
+
+    int pilihan;
+    do {
+        clearScreen();
+        cout << "\n+=====================================================+\n";
+        cout << "|                  MENU UTAMA                         |\n";
+        cout << "+=====================================================+\n";
+        cout << "| 1. Lihat Menu                                       |\n";
+        cout << "| 2. Tambah Pesanan                                   |\n";
+        cout << "| 3. Lihat Pesanan Aktif                              |\n";
+        cout << "| 4. Hapus Pesanan                                    |\n";
+        cout << "| 0. Keluar                                           |\n";
+        cout << "+=====================================================+\n";
+        cout << "Pilihan: ";
+        cin >> pilihan;
+
+        switch (pilihan) {
+            case 1: menuLihatMenu(); break;
+            case 2: tambahPesanan(); break;
+            case 3:
+                clearScreen();
+                cout << "\n+=====================================================+\n";
+                cout << "|               PESANAN AKTIF                         |\n";
+                cout << "+=====================================================+\n";
+                tampilkanTabelPesanan(true);
+                cout << "\n| 1. Lanjut Bayar\n| 2. Kembali\n";
+                cout << "Pilih: ";
+                {
+                    int p; cin >> p;
+                    if (p == 1) prosesTransaksi();
+                }
+                break;
+            case 4: menuHapusPesanan(); break;
+            case 0:
+                clearScreen();
+                cout << "\n+=====================================================+\n";
+                cout << "|         TERIMA KASIH TELAH BERBELANJA!              |\n";
+                cout << "+=====================================================+\n";
+                break;
+            default:
+                cout << "\n[!] Pilihan tidak valid.\n";
+                pressEnter();
+        }
+    } while (pilihan != 0);
+
+    hapusSemuaPesanan();
+    return 0;
+}
 
