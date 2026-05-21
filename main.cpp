@@ -166,4 +166,42 @@ void tampilkanTabelPesanan(bool withSubtotal) {
              << "                              |\n"
              << "+------------------------------------------------------+\n";
 }
+// SORTING
 
+void bubbleSort(Menu arr[], int n, bool ascending, bool (*cmp)(Menu&, Menu&, bool)) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (cmp(arr[j], arr[j+1], ascending))
+                swap(arr[j], arr[j+1]);
+}
+
+bool cmpHarga(Menu &a, Menu &b, bool asc) {
+    return asc ? (a.harga > b.harga) : (a.harga < b.harga);
+}
+
+bool cmpKode(Menu &a, Menu &b, bool asc) {
+    return asc ? (a.kode_menu > b.kode_menu) : (a.kode_menu < b.kode_menu);
+}
+
+int partitionByName(Menu arr[], int low, int high, bool ascending) {
+    string pivot = arr[high].nama_menu;
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        bool kondisi = ascending ? (arr[j].nama_menu <= pivot)
+                                 : (arr[j].nama_menu >= pivot);
+        if (kondisi) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i+1], arr[high]);
+    return i + 1;
+}
+
+void quickSortByName(Menu arr[], int low, int high, bool ascending) {
+    if (low < high) {
+        int pi = partitionByName(arr, low, high, ascending);
+        quickSortByName(arr, low,    pi - 1, ascending);
+        quickSortByName(arr, pi + 1, high,   ascending);
+    }
+}
