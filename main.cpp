@@ -6,7 +6,6 @@
 using namespace std;
 
 // struktur data
-
 struct Menu {
     string kode_menu;
     string nama_menu;
@@ -24,7 +23,6 @@ struct NodePesanan {
 };
 
 // global variabel
-
 Menu daftarMenu[100];
 int jumlahMenu = 0;
 
@@ -34,7 +32,6 @@ NodePesanan *tailPesanan = nullptr;
 int nextIdTransaksi = 1;
 
 // utility
-
 void clearScreen() {
     system("clear || cls");
 }
@@ -53,7 +50,6 @@ string toLower(string str) {
 }
 
 // inisialisasi data
-
 void initMenuData() {
     Menu menuAwal[] = {
         {"M001", "Nasi Goreng",  25000},
@@ -71,7 +67,6 @@ void initMenuData() {
 }
 
 // double linked list
-
 NodePesanan* buatNodePesanan(Menu menu, int jumlah) {
     NodePesanan *node = new NodePesanan();
     node->kode_menu = menu.kode_menu;
@@ -112,7 +107,6 @@ void hapusSemuaPesanan() {
 }
 
 // kalkulasi
-
 int hitungTotalBayar() {
     int total = 0;
     for (NodePesanan *curr = headPesanan; curr; curr = curr->next)
@@ -121,7 +115,6 @@ int hitungTotalBayar() {
 }
 
 // tampilan
-
 void tampilkanMenu(Menu arr[]) {
     cout << "\n+=====================================================+\n";
     cout << "|              DAFTAR MENU RESTORAN                   |\n";
@@ -168,7 +161,6 @@ void tampilkanTabelPesanan(bool withSubtotal) {
 }
 
 // fungsi sorting menyorting
-
 void bubbleSort(Menu arr[], int n, bool ascending, bool (*cmp)(Menu&, Menu&, bool)) {
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
@@ -338,7 +330,6 @@ void menuLihatMenu() {
 }
 
 // menu buat tambah pesanan
-
 void prosesTransaksi(); 
 
 void tambahPesanan() {
@@ -396,5 +387,31 @@ void tambahPesanan() {
     cout << "Pilih: ";
     int pilih; cin >> pilih;
     if (pilih == 1) prosesTransaksi();
+}
+
+// buat delete delete
+void menuHapusPesanan() {
+    clearScreen();
+    if (!headPesanan) {
+        cout << "\n[!] Belum ada pesanan.\n";
+        pressEnter(); return;
+    }
+
+    tampilkanTabelPesanan(false);
+
+    cout << "\nMasukkan nomor pesanan yang akan dihapus (0 = batal): ";
+    int nomor; cin >> nomor;
+    if (nomor == 0) return;
+
+    NodePesanan *curr = headPesanan;
+    for (int i = 1; curr && i < nomor; i++) curr = curr->next;
+
+    if (curr) {
+        cout << "\n[v] Pesanan '" << curr->nama_menu << "' dihapus.\n";
+        hapusPesananDariList(curr);
+    } else {
+        cout << "\n[!] Nomor tidak valid.\n";
+    }
+    pressEnter();
 }
 
