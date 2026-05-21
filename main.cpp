@@ -166,7 +166,8 @@ void tampilkanTabelPesanan(bool withSubtotal) {
              << "                              |\n"
              << "+------------------------------------------------------+\n";
 }
-// SORTING
+
+// fungsi sorting menyorting
 
 void bubbleSort(Menu arr[], int n, bool ascending, bool (*cmp)(Menu&, Menu&, bool)) {
     for (int i = 0; i < n - 1; i++)
@@ -204,4 +205,44 @@ void quickSortByName(Menu arr[], int low, int high, bool ascending) {
         quickSortByName(arr, low,    pi - 1, ascending);
         quickSortByName(arr, pi + 1, high,   ascending);
     }
+}
+
+// fungsi buat searching
+
+// sequential/berdasar nama
+int sequentialSearch(Menu arr[], string keyword) {
+    string keyLower = toLower(keyword);
+    for (int i = 0; i < jumlahMenu; i++) {
+        string nama = toLower(arr[i].nama_menu);
+        if (nama.find(keyLower) != string::npos)
+            return i;
+    }
+    return -1;
+}
+
+// binary/berdasar kode menu
+int binarySearchByKode(Menu arr[], int n, string kode) {
+    string kodeUpper = kode;
+    for (char &c : kodeUpper) c = toupper(c);
+    
+    Menu temp[100];
+    int  orig[100];
+    for (int i = 0; i < n; i++) { temp[i] = arr[i]; orig[i] = i; }
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (temp[j].kode_menu > temp[j+1].kode_menu) {
+                swap(temp[j], temp[j+1]);
+                swap(orig[j], orig[j+1]);
+            }
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        string midKode = temp[mid].kode_menu;
+        for (char &c : midKode) c = toupper(c);
+
+        if      (midKode == kodeUpper) return orig[mid];
+        else if (midKode <  kodeUpper) left  = mid + 1;
+        else                           right = mid - 1;
+    }
+    return -1;
 }
