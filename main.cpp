@@ -246,3 +246,93 @@ int binarySearchByKode(Menu arr[], int n, string kode) {
     }
     return -1;
 }
+
+// submenu utama
+void menuLihatMenu() {
+    clearScreen();
+    tampilkanMenu(daftarMenu);
+
+    cout << "\n+=====================================================+\n";
+    cout << "| 1. Urutkan Menu                                     |\n";
+    cout << "| 2. Cari Menu                                        |\n";
+    cout << "| 3. Kembali                                          |\n";
+    cout << "+=====================================================+\n";
+    cout << "Pilih: ";
+    int pilih; cin >> pilih;
+
+    if (pilih == 1) {
+        clearScreen();
+        cout << "\n+=====================================================+\n";
+        cout << "| 1. Berdasarkan Harga                                |\n";
+        cout << "| 2. Berdasarkan Nama                                 |\n";
+        cout << "| 3. Berdasarkan Kode                                 |\n";
+        cout << "+=====================================================+\n";
+        cout << "Pilih kategori: ";
+        int kat; cin >> kat;
+
+        cout << "\n| 1. Ascending   \n| 2. Descending\n";
+        cout << "Pilih urutan: ";
+        int ur; cin >> ur;
+        bool asc = (ur == 1);
+
+        Menu temp[100];
+        for (int i = 0; i < jumlahMenu; i++) temp[i] = daftarMenu[i];
+
+        switch (kat) {
+            case 1:
+                bubbleSort(temp, jumlahMenu, asc, cmpHarga);
+                cout << "\n[Bubble Sort - Harga " << (asc ? "Termurah->Termahal" : "Termahal->Termurah") << "]\n";
+                break;
+            case 2:
+                quickSortByName(temp, 0, jumlahMenu - 1, asc);
+                cout << "\n[Quick Sort - Nama " << (asc ? "A->Z" : "Z->A") << "]\n";
+                break;
+            case 3:
+                bubbleSort(temp, jumlahMenu, asc, cmpKode);
+                cout << "\n[Bubble Sort - Kode " << (asc ? "Awal->Akhir" : "Akhir->Awal") << "]\n";
+                break;
+            default:
+                cout << "\n[!] Pilihan tidak valid.\n";
+                pressEnter(); return;
+        }
+        tampilkanMenu(temp);
+        cout << "\n[INFO] Data asli tidak berubah.\n";
+        pressEnter();
+
+    } else if (pilih == 2) {
+        clearScreen();
+        cout << "\n+=====================================================+\n";
+        cout << "| 1. Berdasarkan nama                                 |\n";
+        cout << "| 2. Berdasarkan kode                                 |\n";
+        cout << "+=====================================================+\n";
+        cout << "Pilih metode: ";
+        int met; cin >> met; cin.ignore();
+
+        string keyword;
+        cout << (met == 1 ? "Masukkan nama menu : " : "Masukkan kode menu : ");
+        getline(cin, keyword);
+
+        if (met == 1) {
+            int idx = sequentialSearch(daftarMenu, keyword);
+            if (idx != -1) {
+                cout << "\n[DITEMUKAN]\n";
+                cout << "Kode  : " << daftarMenu[idx].kode_menu << "\n";
+                cout << "Nama  : " << daftarMenu[idx].nama_menu << "\n";
+                cout << "Harga : Rp" << daftarMenu[idx].harga << "\n";
+            } else {
+                cout << "\n[!] Menu '" << keyword << "' tidak ditemukan.\n";
+            }
+        } else if (met == 2) {
+            int idx = binarySearchByKode(daftarMenu, jumlahMenu, keyword);
+            if (idx != -1) {
+                cout << "\n[DITEMUKAN]\n";
+                cout << "Kode  : " << daftarMenu[idx].kode_menu << "\n";
+                cout << "Nama  : " << daftarMenu[idx].nama_menu << "\n";
+                cout << "Harga : Rp" << daftarMenu[idx].harga << "\n";
+            } else {
+                cout << "\n[!] Kode '" << keyword << "' tidak ditemukan.\n";
+            }
+        }
+        pressEnter();
+    }
+}
