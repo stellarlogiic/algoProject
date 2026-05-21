@@ -336,3 +336,65 @@ void menuLihatMenu() {
         pressEnter();
     }
 }
+
+// menu buat tambah pesanan
+
+void prosesTransaksi(); 
+
+void tambahPesanan() {
+    char lagi = 'y';
+    while (lagi == 'y' || lagi == 'Y') {
+        clearScreen();
+        tampilkanMenu(daftarMenu);
+
+        string input;
+        cout << "\nMasukkan kode atau nama menu: ";
+        cin.ignore();
+        getline(cin, input);
+
+        if (input.empty()) {
+            cout << "\n[!] Input tidak boleh kosong! Silakan masukkan kode (cth: M001) atau nama menu.\n";
+            pressEnter();
+            lagi = 'y'; continue;
+        }
+
+        int idx = binarySearchByKode(daftarMenu, jumlahMenu, input);
+        if (idx == -1)
+            idx = sequentialSearch(daftarMenu, input);
+
+        if (idx == -1) {
+            cout << "\n[!] Menu '" << input << "' tidak ditemukan! Coba kode (M001-M008) atau nama menu.\n";
+            pressEnter();
+            lagi = 'y'; continue;
+        }
+
+        cout << "Menu : " << daftarMenu[idx].nama_menu
+             << " (Rp" << daftarMenu[idx].harga << ")\n";
+        cout << "Jumlah: ";
+        int jumlah; cin >> jumlah;
+        if (jumlah <= 0) {
+            cout << "\n[!] Jumlah tidak valid!\n";
+            pressEnter();
+            lagi = 'y'; continue;
+        }
+
+        NodePesanan *baru = buatNodePesanan(daftarMenu[idx], jumlah);
+        tambahPesananKeList(baru);
+        cout << "\n[v] " << daftarMenu[idx].nama_menu << " x" << jumlah << " ditambahkan!\n";
+
+        cout << "\nTambah pesanan lagi? (y/n): ";
+        cin >> lagi;
+    }
+
+    clearScreen();
+    cout << "\n+=====================================================+\n";
+    cout << "|                RINGKASAN PESANAN                    |\n";
+    cout << "+=====================================================+\n";
+    tampilkanTabelPesanan(true);
+
+    cout << "| 1. Lanjut ke Pembayaran  \n| 2. Kembali ke Menu \n";
+    cout << "Pilih: ";
+    int pilih; cin >> pilih;
+    if (pilih == 1) prosesTransaksi();
+}
+
