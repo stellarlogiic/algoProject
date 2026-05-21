@@ -415,3 +415,87 @@ void menuHapusPesanan() {
     pressEnter();
 }
 
+// proses bayar bayar + struk
+void prosesTransaksi() {
+    clearScreen();
+    if (!headPesanan) {
+        cout << "\n[!] Tidak ada pesanan aktif.\n";
+        pressEnter(); return;
+    }
+
+    cout << "\n+=====================================================+\n";
+    cout << "|               RINGKASAN PESANAN                     |\n";
+    cout << "+=====================================================+\n";
+    tampilkanTabelPesanan(true);
+
+    string nama;
+    cout << "\nNama pelanggan: ";
+    cin.ignore();
+    getline(cin, nama);
+
+    int total = hitungTotalBayar();
+
+    cout << "\n+=====================================================+\n";
+    cout << "| Total: Rp" << right << setw(17) << total << "                          |\n";
+    cout << "+-----------------------------------------------------+\n";
+    cout << "| 1. Tunai                                            |\n";
+    cout << "| 2. QRIS                                             |\n";
+    cout << "| 3. Debit/Credit Card                                |\n";
+    cout << "+=====================================================+\n";
+    cout << "Pilih metode: ";
+    int met; cin >> met;
+
+    int    bayar = 0, kembalian = 0;
+    string metode;
+
+    switch (met) {
+        case 1:
+            metode = "Tunai";
+            cout << "\nMasukkan jumlah uang: Rp";
+            cin >> bayar;
+            while (bayar < total) {
+                cout << "[!] Kurang Rp" << (total - bayar) << ". Tambah: Rp";
+                int tambah; cin >> tambah;
+                bayar += tambah;
+            }
+            kembalian = bayar - total;
+            break;
+        case 2:
+            metode = "QRIS";
+            cout << "\n[QRIS] Pembayaran berhasil!\n";
+            bayar = total; kembalian = 0;
+            break;
+        case 3:
+            metode = "Debit/Credit Card";
+            cout << "\n[DEBIT/CREDIT CARD] Pembayaran berhasil!\n";
+            bayar = total; kembalian = 0;
+            break;
+        default:
+            metode = "Tunai";
+            bayar = total; kembalian = 0;
+    }
+
+    cout << "\n+=====================================================+\n";
+    cout << "|                    STRUK BAYAR                      |\n";
+    cout << "+=====================================================+\n";
+    cout << "| Pelanggan    : " << left << setw(37) << nama             << "|\n";
+    cout << "| ID Transaksi : #" << left << setw(36) << nextIdTransaksi << "|\n";
+    cout << "+-----------------------------------------------------+\n";
+    for (NodePesanan *curr = headPesanan; curr; curr = curr->next)
+        cout << "| " << left  << setw(22) << curr->nama_menu
+             << " x" << setw(2) << curr->jumlah
+             << "  Rp" << right << setw(14) << curr->subtotal << "        |\n";
+    cout << "+-----------------------------------------------------+\n";
+    cout << "| Total      : Rp" << right << setw(17) << total     << "                    |\n";
+    cout << "| Bayar      : Rp" << right << setw(17) << bayar     << "                    |\n";
+    cout << "| Kembalian  : Rp" << right << setw(17) << kembalian << "                    |\n";
+    cout << "| Metode     : "   << left  << setw(39) << metode    << "|\n";
+    cout << "+=====================================================+\n";
+
+    nextIdTransaksi++;
+    hapusSemuaPesanan();
+    cout << "\n[v] Transaksi selesai. Pesanan telah dihapus dari daftar.\n";
+    pressEnter();
+}
+
+
