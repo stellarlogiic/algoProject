@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -150,7 +149,7 @@ void tampilkanTabelPesanan(bool withSubtotal) {
         if (withSubtotal)
             cout << "Rp" << right << setw(7) << curr->subtotal << " |\n";
         else
-            cout << "           |\n";
+            cout << "          |\n";
         grandTotal += curr->subtotal;
     }
     cout << "+------------------------------------------------------+\n";
@@ -160,7 +159,7 @@ void tampilkanTabelPesanan(bool withSubtotal) {
              << "+------------------------------------------------------+\n";
 }
 
-// fungsi sorting menyorting
+// fungsi sorting
 void bubbleSort(Menu arr[], int n, bool ascending, bool (*cmp)(Menu&, Menu&, bool)) {
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
@@ -199,7 +198,7 @@ void quickSortByName(Menu arr[], int low, int high, bool ascending) {
     }
 }
 
-// fungsi buat searching
+// fungsi searching
 
 // sequential/berdasar nama
 int sequentialSearch(Menu arr[], string keyword) {
@@ -212,34 +211,34 @@ int sequentialSearch(Menu arr[], string keyword) {
     return -1;
 }
 
-// binary/berdasar kode menu
 int binarySearchByKode(Menu arr[], int n, string kode) {
     string kodeUpper = kode;
     for (char &c : kodeUpper) c = toupper(c);
-    
-    Menu temp[100];
-    int  orig[100];
-    for (int i = 0; i < n; i++) { temp[i] = arr[i]; orig[i] = i; }
+
+    int sortedIdx[100];
+    for (int i = 0; i < n; i++) sortedIdx[i] = i;
+
+    // bubble sort buat di kode_menu
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
-            if (temp[j].kode_menu > temp[j+1].kode_menu) {
-                swap(temp[j], temp[j+1]);
-                swap(orig[j], orig[j+1]);
-            }
+            if (arr[sortedIdx[j]].kode_menu > arr[sortedIdx[j+1]].kode_menu)
+                swap(sortedIdx[j], sortedIdx[j+1]);
+
+    // binary search 
     int left = 0, right = n - 1;
     while (left <= right) {
         int mid = (left + right) / 2;
-        string midKode = temp[mid].kode_menu;
+        string midKode = arr[sortedIdx[mid]].kode_menu;
         for (char &c : midKode) c = toupper(c);
 
-        if      (midKode == kodeUpper) return orig[mid];
+        if      (midKode == kodeUpper) return sortedIdx[mid]; // kembalikan index asli
         else if (midKode <  kodeUpper) left  = mid + 1;
         else                           right = mid - 1;
     }
     return -1;
 }
 
-// submenu utama
+// submenu lihat menu
 void menuLihatMenu() {
     clearScreen();
     tampilkanMenu(daftarMenu);
@@ -329,10 +328,11 @@ void menuLihatMenu() {
     }
 }
 
-// menu buat tambah pesanan
-void prosesTransaksi(); 
+// forward declaration
+void prosesTransaksi();
 
 void tambahPesanan() {
+    cin.ignore(); 
     char lagi = 'y';
     while (lagi == 'y' || lagi == 'Y') {
         clearScreen();
@@ -340,8 +340,7 @@ void tambahPesanan() {
 
         string input;
         cout << "\nMasukkan kode atau nama menu: ";
-        cin.ignore();
-        getline(cin, input);
+        getline(cin, input); 
 
         if (input.empty()) {
             cout << "\n[!] Input tidak boleh kosong! Silakan masukkan kode (cth: M001) atau nama menu.\n";
@@ -375,6 +374,7 @@ void tambahPesanan() {
 
         cout << "\nTambah pesanan lagi? (y/n): ";
         cin >> lagi;
+        cin.ignore(); 
     }
 
     clearScreen();
@@ -383,13 +383,13 @@ void tambahPesanan() {
     cout << "+=====================================================+\n";
     tampilkanTabelPesanan(true);
 
-    cout << "| 1. Lanjut ke Pembayaran  \n| 2. Kembali ke Menu \n";
+    cout << "\n| 1. Lanjut ke Pembayaran  \n| 2. Kembali ke Menu \n";
     cout << "Pilih: ";
     int pilih; cin >> pilih;
     if (pilih == 1) prosesTransaksi();
 }
 
-// buat delete delete
+// hapus pesanan
 void menuHapusPesanan() {
     clearScreen();
     if (!headPesanan) {
@@ -397,7 +397,7 @@ void menuHapusPesanan() {
         pressEnter(); return;
     }
 
-    tampilkanTabelPesanan(false);
+    tampilkanTabelPesanan(true);
 
     cout << "\nMasukkan nomor pesanan yang akan dihapus (0 = batal): ";
     int nomor; cin >> nomor;
@@ -415,7 +415,6 @@ void menuHapusPesanan() {
     pressEnter();
 }
 
-// proses bayar bayar + struk
 void prosesTransaksi() {
     clearScreen();
     if (!headPesanan) {
@@ -454,11 +453,13 @@ void prosesTransaksi() {
             cout << "\nMasukkan jumlah uang: Rp";
             cin >> bayar;
             while (bayar < total) {
-                cout << "[!] Kurang Rp" << (total - bayar) << ". Tambah: Rp";
-                int tambah; cin >> tambah;
-                bayar += tambah;
+                int kurang = total - bayar;
+                cout << "[!] Uang kurang Rp." << kurang;
+                cout << "\n[!] Silakan masukkan ulang nominal: Rp.";
+                cin >> bayar;
             }
             kembalian = bayar - total;
+            cout << "\n[CASH] Pembayaran berhasil!\n";
             break;
         case 2:
             metode = "QRIS";
@@ -472,6 +473,7 @@ void prosesTransaksi() {
             break;
         default:
             metode = "Tunai";
+            cout << "\n[CASH] Pembayaran berhasil!\n";
             bayar = total; kembalian = 0;
     }
 
@@ -549,4 +551,3 @@ int main() {
     hapusSemuaPesanan();
     return 0;
 }
-
